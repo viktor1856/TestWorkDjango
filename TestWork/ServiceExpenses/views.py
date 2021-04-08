@@ -16,9 +16,10 @@ def avtorization(request):
     if request.method == 'POST':
         form = AvtorizeForm(request.POST)
         if form.is_valid():
-            username = request.POST['login']
+            username = request.POST['username']
             password = request.POST['password']
             user = auth.authenticate(username=username, password=password)
+            
             if user is not None and user.is_active:
                 # Правильный пароль и пользователь "активен"
                 auth.login(request, user)
@@ -54,22 +55,28 @@ def logout(request):
 def registration(request):
     if request.method == 'POST':
         form = userRegistration(request.POST)
+        context={'form': form}
         if form.is_valid():
-            username = request.POST['login']
-            password = request.POST['password']
-            password2 = request.POST['password2']
-            context={'form': form}
-            if len(password)<8:
-                context['error_avt']='Пароль должен быть больше 8 символов'
-                return render(request,'ServiceExpenses/registration.html',context)                    
-            elif password !=password2:
-                context['error_avt']='Оба пароля должны совпадать'  
+            username = request.POST['username']
+            if User.objects.filter(username=username).exists():   
+                context['error_avt']='Такой пользователь уже существует'
                 return render(request,'ServiceExpenses/registration.html',context)
-            else:                
-                user = User.objects.create_user(username=username,
-                                    password=password)
-                user.save()
-                return HttpResponseRedirect(reverse('avtorization'))
+            else:
+                password = request.POST['password']
+                password2 = request.POST['password2']
+                
+                if len(password)<8:
+                    context['error_avt']='Пароль должен быть больше 8 символов'
+                    return render(request,'ServiceExpenses/registration.html',context)                    
+                elif password != password2:
+                    context['error_avt']='Оба пароля должны совпадать'  
+                    return render(request,'ServiceExpenses/registration.html',context)
+                else:                
+                    user = User.objects.create_user(username=username,
+                                        password=password)
+                    user.save()
+                    return HttpResponseRedirect(reverse('avtorization'))
+            
     else:
         context = {'form': userRegistration()}
         return render(request,'ServiceExpenses/registration.html',context)
