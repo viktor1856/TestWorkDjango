@@ -1,0 +1,16 @@
+{%extends "ServiceExpenses/base.html" %}
+
+
+{%block body%}
+   
+<form action="{% url 'avtorization'%}" method="POST">
+    {%csrf_token%}
+    {{error_avt}}
+    <p>
+        {{form.as_p}}
+    </p>
+    <p>
+        <input type="submit" value="Войти">
+    </p>
+</form>
+{%endblock%}

@@ -1,0 +1,13 @@
+{%extends "ServiceExpenses/base.html" %}
+
+{%block body%}
+   <h1>Добро пожаловать в личный кабинет, {{user.first_name}}</h1>
+   <ul>
+       <li>тест</li>
+       <li>тест2</li>
+   </ul>
+   <hr>
+   <a href="{%url 'logout'%}"> выход   </a>
+
+
+{%endblock%}
